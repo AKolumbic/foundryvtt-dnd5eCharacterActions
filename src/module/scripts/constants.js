@@ -10,6 +10,7 @@ export let MySettings = /*#__PURE__*/ (function (MySettings) {
   MySettings['injectNPCs'] = 'inject-npcs';
   MySettings['injectVehicles'] = 'inject-vehicles';
   MySettings['limitActionsToCantrips'] = 'limit-actions-to-cantrips';
+  MySettings['moduleVersion'] = 'module-version';
   return MySettings;
 })({});
 

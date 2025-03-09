@@ -1,6 +1,9 @@
 {
   "CAL5E": {
     "HitDC": "Hit / DC",
+    "HitDCTitle": "Attack Bonus or Save DC",
+    "ErrorLoading": "Error loading actions list",
+    "ErrorDetails": "Please check the console for more details",
     "button": {
       "setOverrideFalse": "Remove from Actions List",
       "setOverrideTrue": "Add to Actions List"
@@ -8,7 +11,7 @@
     "settings": {
       "limitActionsToCantrips": {
         "Label": "Limit Actions to Cantrips",
-        "Hint": "Instead of showing all spells that deal damage in the Actions tab/panel by default, limit it to only cantrips. This is the default D&DBeyond behavior."
+        "Hint": "Instead of showing all spells that deal damage in the Actions list, limit it to only cantrips. This is the default D&DBeyond behavior."
       },
       "includeOneMinuteSpells": {
         "Label": "Include Minute-long Spells as Actions",

@@ -4,6 +4,45 @@ import { MODULE_ID, MODULE_ABBREV, MySettings, TEMPLATES } from './scripts/const
 import { getGame, log } from './scripts/helpers';
 import { getActorActionsData, renderActionsList, isItemInActionList } from './scripts/api';
 import { addFavoriteControls } from './scripts/handleFavoriteControls';
+import { migrateWorldContent } from './scripts/migrations';
+
+// Add validation function to check if module can function properly
+function validateModuleIntegration() {
+  try {
+    // Basic validation - check if a test actor is available
+    const testActor = game.actors?.find((a) => a.type === 'character');
+    if (!testActor) {
+      log(false, 'No test actor available for validation');
+      return true; // Consider it valid if no actors to test against
+    }
+
+    // Test if basic functionality works
+    const actionData = getActorActionsData(testActor);
+
+    // Check if we got a valid data structure back
+    if (!actionData || typeof actionData !== 'object') {
+      log(true, 'Module validation failed: getActorActionsData returned invalid data');
+      return false;
+    }
+
+    // Check that we have the expected categories
+    const expectedCategories = ['action', 'bonus', 'crew', 'lair', 'legendary', 'reaction', 'other'];
+    const hasAllCategories = expectedCategories.every(
+      (category) => Object.prototype.hasOwnProperty.call(actionData, category) && actionData[category] instanceof Set
+    );
+
+    if (!hasAllCategories) {
+      log(true, 'Module validation failed: Missing expected action categories');
+      return false;
+    }
+
+    log(false, 'Module validation successful');
+    return true;
+  } catch (error) {
+    log(true, 'Module validation failed with error:', error);
+    return false;
+  }
+}
 
 Handlebars.registerHelper(`${MODULE_ABBREV}-isEmpty`, (input) => {
   if (input instanceof Array) {
@@ -104,6 +143,7 @@ Hooks.once('init', async function () {
       getActorActionsData,
       isItemInActionList,
       renderActionsList,
+      validateModuleIntegration,
     };
   }
   // eslint-disable-next-line no-undef
@@ -129,6 +169,15 @@ Hooks.once('init', async function () {
     },
   };
   Hooks.call(`CharacterActions5eReady`, characterActionsModuleData?.api);
+});
+
+// Add a ready hook to run migrations
+Hooks.once('ready', async function () {
+  // Run migrations if needed
+  await migrateWorldContent();
+
+  // Validate the module's functionality
+  validateModuleIntegration();
 });
 
 // default sheet injection if this hasn't yet been injected

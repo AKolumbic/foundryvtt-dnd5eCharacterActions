@@ -1,51 +1,67 @@
 import { getActivationType, getGame, log, isActiveItem } from './helpers';
-import { MODULE_ID, MyFlags, MySettings, damageTypeIconMap, ItemTypeSortValues } from './constants';
+import { MODULE_ID, MyFlags, MySettings, damageTypeIconMap, ItemTypeSortValues, TEMPLATES } from './constants';
 
 export function getActorActionsData(actor) {
-  const filteredItems = actor.items
-    .filter(isItemInActionList)
-    .sort((a, b) => {
-      if (a.type !== b.type) {
-        return ItemTypeSortValues[a.type] - ItemTypeSortValues[b.type];
-      }
-      if (a.type === 'spell' && b.type === 'spell') {
-        return a.system.level - b.system.level;
-      }
-      return (a.sort || 0) - (b.sort || 0);
-    })
-    .map((item) => {
-      if (item.labels) {
-        item.labels.type = getGame().i18n.localize(`ITEM.Type${item.type.titleCase()}`);
-      }
-
-      // removes any in-formula flavor text from the formula in the label
-      if (item.labels?.derivedDamage?.length) {
-        item.labels.derivedDamage = item.labels.derivedDamage.map(({ formula, ...rest }) => ({
-          formula: formula?.replace(/\[.+?\]/, '') || '0',
-          ...rest,
-        }));
-      }
-      return item;
-    });
-  const actionsData = filteredItems.reduce(
-    (acc, item) => {
-      try {
-        log(false, 'digesting item', {
-          item,
-        });
-        if (['backpack', 'tool'].includes(item.type)) {
-          return acc;
+  try {
+    const filteredItems = actor.items
+      .filter(isItemInActionList)
+      .sort((a, b) => {
+        if (a.type !== b.type) {
+          return ItemTypeSortValues[a.type] - ItemTypeSortValues[b.type];
+        }
+        if (a.type === 'spell' && b.type === 'spell') {
+          return a.system.level - b.system.level;
+        }
+        return (a.sort || 0) - (b.sort || 0);
+      })
+      .map((item) => {
+        if (item.labels) {
+          item.labels.type = getGame().i18n.localize(`ITEM.Type${item.type.titleCase()}`);
         }
 
-        const activationType = getActivationType(item.system.activation?.type);
-        acc[activationType].add(item);
-        return acc;
-      } catch (e) {
-        log(true, 'error trying to digest item', item.name, e);
-        return acc;
+        // removes any in-formula flavor text from the formula in the label
+        if (item.labels?.derivedDamage?.length) {
+          item.labels.derivedDamage = item.labels.derivedDamage.map(({ formula, ...rest }) => ({
+            formula: formula?.replace(/\[.+?\]/, '') || '0',
+            ...rest,
+          }));
+        }
+        return item;
+      });
+
+    const actionsData = filteredItems.reduce(
+      (acc, item) => {
+        try {
+          log(false, 'digesting item', {
+            item,
+          });
+          if (['backpack', 'tool'].includes(item.type)) {
+            return acc;
+          }
+
+          const activationType = getActivationType(item.system.activation?.type);
+          acc[activationType].add(item);
+          return acc;
+        } catch (e) {
+          log(true, 'error trying to digest item', item.name, e);
+          return acc;
+        }
+      },
+      {
+        action: new Set(),
+        bonus: new Set(),
+        crew: new Set(),
+        lair: new Set(),
+        legendary: new Set(),
+        reaction: new Set(),
+        other: new Set(),
       }
-    },
-    {
+    );
+    return actionsData;
+  } catch (error) {
+    log(true, 'Error in getActorActionsData', error);
+    // Return empty data structure on error
+    return {
       action: new Set(),
       bonus: new Set(),
       crew: new Set(),
@@ -53,9 +69,8 @@ export function getActorActionsData(actor) {
       legendary: new Set(),
       reaction: new Set(),
       other: new Set(),
-    }
-  );
-  return actionsData;
+    };
+  }
 }
 
 export function isItemInActionList(item) {
@@ -129,32 +144,16 @@ export function isItemInActionList(item) {
  * Renders the html of the actions list for the provided actor data
  */
 export function renderActionsList(actorData, options) {
-  const actionData = getActorActionsData(actorData);
-  log(false, 'renderActionsList', {
-    actorData,
-    options,
-    data: actionData,
-  });
-  if (options !== undefined) {
-    if (options.sheetVersion == 'actor-actions-list-v2') {
-      return renderTemplate(`modules/${MODULE_ID}/templates/actor-actions-list-v2.hbs`, {
-        actionData,
-        abilities: getGame().dnd5e.config.abilities.label,
-        activationTypes: {
-          ...getGame().dnd5e.config.abilityActivationTypes,
-          other: getGame().i18n.localize(`DND5E.ActionOther`),
-        },
-        damageTypes: {
-          ...getGame().dnd5e.config.damageTypes,
-          ...getGame().dnd5e.config.healingTypes,
-        },
-        damageTypeIconMap,
-        rollIcon: options?.rollIcon,
-        isOwner: actorData.isOwner,
-      });
-    }
-  } else {
-    return renderTemplate(`modules/${MODULE_ID}/templates/actor-actions-list.hbs`, {
+  try {
+    const actionData = getActorActionsData(actorData);
+
+    log(false, 'renderActionsList', {
+      actorData,
+      options,
+      data: actionData,
+    });
+
+    const templateData = {
       actionData,
       abilities: getGame().dnd5e.config.abilities.label,
       activationTypes: {
@@ -168,6 +167,22 @@ export function renderActionsList(actorData, options) {
       damageTypeIconMap,
       rollIcon: options?.rollIcon,
       isOwner: actorData.isOwner,
+    };
+
+    if (options !== undefined) {
+      if (options.sheetVersion == 'actor-actions-list-v2') {
+        return renderTemplate(TEMPLATES.actionListv2, templateData);
+      }
+    } else {
+      return renderTemplate(TEMPLATES.actionList, templateData);
+    }
+  } catch (error) {
+    log(true, 'Error in renderActionsList', error);
+    // Return a minimal template with error information
+    return renderTemplate(TEMPLATES.actionList, {
+      error: true,
+      errorMessage: error.message,
+      isOwner: actorData?.isOwner || false,
     });
   }
 }

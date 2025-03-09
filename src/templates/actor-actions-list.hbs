@@ -1,4 +1,12 @@
 <dnd5e-inventory class="inventory-element">
+{{#if error}}
+<div class="character-actions-dnd5e error-state">
+  <h3 class="error-message">Error loading actions list</h3>
+  {{#if errorMessage}}
+  <p class="error-details">{{errorMessage}}</p>
+  {{/if}}
+</div>
+{{else}}
 {{#*inline 'action-sublist'}}
 {{#unless (CAL5E-isEmpty items)}}
 <li class="items-header flexrow">
@@ -119,4 +127,5 @@
   {{> action-sublist items=data label=(lookup @root/activationTypes key) }}
   {{/each}}
 </ol>
+{{/if}}
 </dnd5e-inventory>

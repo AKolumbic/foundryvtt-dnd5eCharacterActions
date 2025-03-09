@@ -1,15 +1,17 @@
 # Character Actions 5e
 
-![Downloads Latest)](https://img.shields.io/github/downloads/eastcw/foundryvtt-dnd5eCharacterActions/latest/module.zip?color=blue)
+![Downloads Latest)](https://img.shields.io/github/downloads/akolumbic/foundryvtt-dnd5eCharacterActions/latest/module.zip?color=blue)
 [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fcharacter-actions-list-5e&colorB=4aa94a)](https://forge-vtt.com/bazaar#package=character-actions-list-5e)
 [![Foundry Hub Endorsements](https://img.shields.io/endpoint?logoColor=white&url=https%3A%2F%2Fwww.foundryvtt-hub.com%2Fwp-json%2Fhubapi%2Fv1%2Fpackage%2Fcharacter-actions-list-5e%2Fshield%2Fendorsements)](https://www.foundryvtt-hub.com/package/character-actions-list-5e/)
 [![Foundry Hub Comments](https://img.shields.io/endpoint?logoColor=white&url=https%3A%2F%2Fwww.foundryvtt-hub.com%2Fwp-json%2Fhubapi%2Fv1%2Fpackage%2Fcharacter-actions-list-5e%2Fshield%2Fcomments)](https://www.foundryvtt-hub.com/package/character-actions-list-5et/)
 
-![Foundry Minimum Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Feastcw%2Ffoundryvtt-dnd5eCharacterActions%2Fmain%2Fsrc%2Fmodule.json&query=%24.compatibility.minimum&label=Minimum%20Core%20Version&color=orange)
-![Foundry Recommended Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Feastcw%2Ffoundryvtt-dnd5eCharacterActions%2Fmain%2Fsrc%2Fmodule.json&query=%24.compatibility.verified&label=Recommended%20Core%20Version&color=green)
-![Manifest+ Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Feastcw%2Ffoundryvtt-dnd5eCharacterActions%2Fmain%2Fsrc%2Fmodule.json&query=%24.manifestPlusVersion&label=Manifest%2B%20Version&color=blue)
+![Foundry Minimum Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fakolumbic%2Ffoundryvtt-dnd5eCharacterActions%2Fmain%2Fsrc%2Fmodule.json&query=%24.compatibility.minimum&label=Minimum%20Core%20Version&color=orange)
+![Foundry Recommended Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fakolumbic%2Ffoundryvtt-dnd5eCharacterActions%2Fmain%2Fsrc%2Fmodule.json&query=%24.compatibility.verified&label=Recommended%20Core%20Version&color=green)
+![Manifest+ Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fakolumbic%2Ffoundryvtt-dnd5eCharacterActions%2Fmain%2Fsrc%2Fmodule.json&query=%24.manifestPlusVersion&label=Manifest%2B%20Version&color=blue)
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J4NM2RD)
+## Current Maintainer
+
+This module is now maintained by [akolumbic](https://github.com/akolumbic) to ensure continued compatibility with the latest Foundry VTT versions.
 
 This module provides a placable reusable "component" which details all of the actions a given Character Actor can take, intending to replicate the list in the Actions Tab of the D&DBeyond character sheet. The module has two ways in which it can be used: it will either inject the actions tab itself, or another module can leverage the API it provides and use that to inject the proper HTML wherever it desires.
 
@@ -48,7 +50,7 @@ Additionally, you can override the default list by selectively including or excl
 Module JSON:
 
 ```
-https://github.com/eastcw/foundryvtt-dnd5eCharacterActions/releases/latest/download/module.json
+https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases/latest/download/module.json
 ```
 
 ## Options
@@ -184,6 +186,10 @@ I'm honestly not sure how well this will play with modules that affect character
 ## Acknowledgements
 
 Mostly a thousand thanks to [Andrew Krigline](https://github.com/akrigline) for creating this module and making it so good to use and indispensable that I felt compelled to take it over when he couldn't maintain it any more.
+
+Previously maintained by [eastcw](https://github.com/eastcw), now maintained by [akolumbic](https://github.com/akolumbic).
+
+Code contributions by [jagoe](https://github.com/jagoe).
 
 Bootstrapped with Nick East's [create-foundry-project](https://gitlab.com/foundry-projects/foundry-pc/create-foundry-project).
 

@@ -1,6 +1,15 @@
 import { MySettings, MODULE_ID, MODULE_ABBREV } from './constants';
 import { getGame } from './helpers';
 export const registerSettings = function () {
+  // Register module version for migration tracking
+  getGame().settings.register(MODULE_ID, MySettings.moduleVersion, {
+    name: 'Module Version',
+    scope: 'world',
+    config: false,
+    type: String,
+    default: '0.0.0',
+  });
+
   // Register any custom module settings here
   getGame().settings.register(MODULE_ID, MySettings.limitActionsToCantrips, {
     name: `${MODULE_ABBREV}.settings.limitActionsToCantrips.Label`,
