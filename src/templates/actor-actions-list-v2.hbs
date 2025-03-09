@@ -17,7 +17,7 @@
 
     <ol class="item-list unlist">
       {{#each items as |item|}}
-        <li class="item context-enabled" data-item-id="{{item.id}}" data-entry-id="{{item.id}}"  data-item-name="{{item.name}}" data-item-sort="0" data-ungrouped="all" data-grouped="{{item.type}}" draggable="true">
+        <li class="item context-enabled" data-item-id="{{item.id}}" data-entry-id="{{item.id}}"  data-item-name="{{item.name}}" data-item-sort="0" data-ungrouped="all" data-grouped="{{item.type}}" draggable="true" style="display: flex; align-items: center; gap: 0.5rem;">
 
           <div class="item-name item-action item-tooltip rollable" role="button" data-action="use" aria-label="{{item.name}}" data-tooltip="
               <section class=&quot;loading&quot; data-uuid=&quot;Actor.{{actor.id}}.Item.{{item.id}}&quot;><i class=&quot;fas fa-spinner fa-spin-pulse&quot;></i></section>
