@@ -20,7 +20,6 @@ export let MyFlags = /*#__PURE__*/ (function (MyFlags) {
 })({});
 
 export const TEMPLATES = {
-  actionList: `modules/${MODULE_ID}/templates/actor-actions-list.hbs`,
   actionListv2: `modules/${MODULE_ID}/templates/actor-actions-list-v2.hbs`,
 };
 

@@ -2,7 +2,7 @@
   "id": "character-actions-list-5e",
   "title": "Character Actions List dnd5e",
   "description": "Provides an Actions List Component",
-  "version": "7.2.0",
+  "version": "7.2.1",
   "authors": [
     {
       "name": "akolumbic",
@@ -47,8 +47,8 @@
   },
   "bugs": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/issues",
   "changelog": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases",
-  "download": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases/download/v7.2.0/module.zip",
-  "manifest": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases/download/v7.2.0/module.json",
+  "download": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases/download/v7.2.1/module.zip",
+  "manifest": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases/download/v7.2.1/module.json",
   "readme": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/blob/main/README.md",
   "url": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions",
   "manifestPlusVersion": "1.2.0",
