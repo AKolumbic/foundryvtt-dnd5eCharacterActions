@@ -308,5 +308,49 @@ describe('handleFavoriteControls.js', () => {
       expect(mockItemImage.click).not.toHaveBeenCalled();
       expect(mockItemRecharge.click).not.toHaveBeenCalled();
     });
+
+    // TEST FOR LINE 53: Testing the log function call after successful flag update
+    test('logs debug information after successful flag update', async () => {
+      // Get the log function
+      const { log } = require('../../src/module/scripts/helpers');
+
+      // Call the function under test
+      addFavoriteControls(mockApp, mockHtml);
+
+      // Verify click handler was stored
+      expect(clickHandler).not.toBeNull();
+
+      // Create a mock event
+      const mockEvent = { target: document.createElement('a') };
+
+      // Call the click handler
+      await clickHandler(mockEvent);
+
+      // Check that debug information was logged
+      expect(log).toHaveBeenCalledWith(
+        false,
+        'a.item-action-filter-override click registered and tab re-rendered',
+        expect.objectContaining({
+          itemId: 'item1',
+          relevantItem: expect.anything(),
+        })
+      );
+    });
+
+    // TEST FOR LINE 73: Testing the case where relevantItem is undefined
+    test('skips adding button when item is not found', () => {
+      // Mock the app.object.items.get to return undefined for a specific item
+      mockApp.object.items.get.mockImplementation((id) => {
+        if (id === 'item2') return undefined;
+        return mockItems.get(id);
+      });
+
+      // Call the function under test
+      addFavoriteControls(mockApp, mockHtml);
+
+      // Check that the append function was called only once (for item1)
+      // since item2 should be skipped
+      expect(mockJQuery.append).toHaveBeenCalledTimes(1);
+    });
   });
 });

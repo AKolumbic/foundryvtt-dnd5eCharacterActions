@@ -1,89 +1,77 @@
-import { getActivationType, isActiveItem, log } from '../../src/module/scripts/helpers';
+import { getActivationType, isActiveItem, log, getGame } from '../../src/module/scripts/helpers';
 import { MODULE_ID } from '../../src/module/scripts/constants';
-
-// Mock the global game object
-global.game = {
-  modules: {
-    get: jest.fn(() => ({
-      api: {
-        getPackageDebugValue: jest.fn(() => true),
-      },
-    })),
-  },
-};
-
-// Mock console.log
-console.log = jest.fn();
 
 describe('helpers.js', () => {
   beforeEach(() => {
-    // Reset mocks before each test
+    // Reset all mocks
     jest.clearAllMocks();
+
+    // Mock the Game class
+    global.Game = class Game {};
+
+    // Mock console methods
+    global.console = {
+      log: jest.fn(),
+      debug: jest.fn(),
+      error: jest.fn(),
+    };
+
+    // Mock game object with dev-mode module
+    global.game = new global.Game();
+    global.game.modules = {
+      get: jest.fn(() => ({
+        api: {
+          getPackageDebugValue: jest.fn(() => true),
+        },
+      })),
+    };
   });
 
-  describe('getActivationType', () => {
-    test('returns the activation type as-is for known types', () => {
-      const knownTypes = ['action', 'bonus', 'crew', 'lair', 'legendary', 'reaction'];
+  describe('getGame', () => {
+    test('returns game object when initialized', () => {
+      // Mock global game object as instance of Game
+      global.game = new global.Game();
+      global.game.i18n = {
+        localize: jest.fn(),
+      };
 
-      knownTypes.forEach((type) => {
-        expect(getActivationType(type)).toBe(type);
-      });
+      const result = getGame();
+      expect(result).toBe(global.game);
     });
 
-    test('returns "other" for unknown activation types', () => {
-      const unknownTypes = ['special', 'minute', 'hour', 'day', 'unknown', undefined, null];
+    // TEST FOR LINES 35-38: Testing error case when game is not initialized
+    test('throws error when game is not initialized', () => {
+      // Remove global game object
+      global.game = undefined;
 
-      unknownTypes.forEach((type) => {
-        expect(getActivationType(type)).toBe('other');
-      });
-    });
-  });
+      // Verify that calling getGame throws an error
+      expect(() => getGame()).toThrow('game is not initialized yet!');
 
-  describe('isActiveItem', () => {
-    test('returns false for undefined activation type', () => {
-      expect(isActiveItem(undefined)).toBe(false);
-      expect(isActiveItem(null)).toBe(false);
-      expect(isActiveItem('')).toBe(false);
-    });
+      // Set game to non-Game instance
+      global.game = { notAGame: true };
 
-    test('returns false for excluded activation types', () => {
-      const excludedTypes = ['minute', 'hour', 'day', 'none'];
-
-      excludedTypes.forEach((type) => {
-        expect(isActiveItem(type)).toBe(false);
-      });
-    });
-
-    test('returns true for valid activation types', () => {
-      const validTypes = ['action', 'bonus', 'reaction', 'legendary', 'lair', 'crew', 'special'];
-
-      validTypes.forEach((type) => {
-        expect(isActiveItem(type)).toBe(true);
-      });
+      // Verify that calling getGame throws an error
+      expect(() => getGame()).toThrow('game is not initialized yet!');
     });
   });
 
   describe('log', () => {
-    test('logs message when force is true', () => {
-      log(true, 'Test message', { data: 'test' });
-
-      expect(console.log).toHaveBeenCalledWith(MODULE_ID, '|', 'Test message', { data: 'test' });
+    test('logs debug message when force is false', () => {
+      log(false, 'test message', { data: 'test' });
+      expect(console.log).toHaveBeenCalledWith(MODULE_ID, '|', 'test message', { data: 'test' });
     });
 
-    test('logs message when debug mode is enabled', () => {
-      // Mock dev-mode module to return true for debug value
-      global.game.modules.get.mockReturnValue({
-        api: {
-          getPackageDebugValue: jest.fn(() => true),
-        },
-      });
-
-      log(false, 'Debug message', { debug: true });
-
-      expect(console.log).toHaveBeenCalledWith(MODULE_ID, '|', 'Debug message', { debug: true });
+    test('logs error message when force is true', () => {
+      log(true, 'test error', new Error('test'));
+      expect(console.log).toHaveBeenCalledWith(MODULE_ID, '|', 'test error', expect.any(Error));
     });
 
-    test('does not log when force is false and debug mode is disabled', () => {
+    test('handles multiple arguments', () => {
+      log(false, 'message', 'arg1', 'arg2', { data: 'test' });
+      expect(console.log).toHaveBeenCalledWith(MODULE_ID, '|', 'message', 'arg1', 'arg2', { data: 'test' });
+    });
+
+    test('respects dev-mode debug setting', () => {
       // Mock dev-mode module to return false for debug value
       global.game.modules.get.mockReturnValue({
         api: {
@@ -91,36 +79,55 @@ describe('helpers.js', () => {
         },
       });
 
-      log(false, 'Should not log');
-
+      // This should not log because force is false and debug mode is off
+      log(false, 'should not log');
       expect(console.log).not.toHaveBeenCalled();
+
+      // This should log because force is true, regardless of debug mode
+      log(true, 'should log');
+      expect(console.log).toHaveBeenCalledWith(MODULE_ID, '|', 'should log');
     });
   });
 
-  describe('getGame', () => {
-    // We'll test the getGame function indirectly through the log function
-    // since it's already using getGame() internally
-    test('getGame is used by log function', () => {
-      // Mock the game object to have modules.get
-      global.game = {
-        modules: {
-          get: jest.fn(() => ({
-            api: {
-              getPackageDebugValue: jest.fn(() => true),
-            },
-          })),
-        },
-      };
+  describe('isActiveItem', () => {
+    test('returns true for valid activation types', () => {
+      expect(isActiveItem('action')).toBe(true);
+      expect(isActiveItem('bonus')).toBe(true);
+      expect(isActiveItem('reaction')).toBe(true);
+      expect(isActiveItem('legendary')).toBe(true);
+      expect(isActiveItem('lair')).toBe(true);
+      expect(isActiveItem('crew')).toBe(true);
+    });
 
-      // Make game an instance of Game
-      global.Game = function () {};
-      Object.setPrototypeOf(global.game, global.Game.prototype);
+    test('returns false for invalid activation types', () => {
+      expect(isActiveItem('minute')).toBe(false);
+      expect(isActiveItem('hour')).toBe(false);
+      expect(isActiveItem('day')).toBe(false);
+      expect(isActiveItem('none')).toBe(false);
+      expect(isActiveItem(undefined)).toBe(false);
+      expect(isActiveItem(null)).toBe(false);
+      expect(isActiveItem('')).toBe(false);
+    });
+  });
 
-      // Call log which uses getGame internally
-      log(false, 'Testing getGame indirectly');
+  describe('getActivationType', () => {
+    test('returns correct type for valid activation types', () => {
+      expect(getActivationType('action')).toBe('action');
+      expect(getActivationType('bonus')).toBe('bonus');
+      expect(getActivationType('reaction')).toBe('reaction');
+      expect(getActivationType('legendary')).toBe('legendary');
+      expect(getActivationType('lair')).toBe('lair');
+      expect(getActivationType('crew')).toBe('crew');
+    });
 
-      // Verify that modules.get was called, which means getGame worked
-      expect(global.game.modules.get).toHaveBeenCalledWith('_dev-mode');
+    test('returns "other" for invalid activation types', () => {
+      expect(getActivationType('minute')).toBe('other');
+      expect(getActivationType('hour')).toBe('other');
+      expect(getActivationType('day')).toBe('other');
+      expect(getActivationType('none')).toBe('other');
+      expect(getActivationType(undefined)).toBe('other');
+      expect(getActivationType(null)).toBe('other');
+      expect(getActivationType('')).toBe('other');
     });
   });
 });
