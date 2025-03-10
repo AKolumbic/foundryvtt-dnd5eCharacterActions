@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "foundryvtt-dnd5eCharacterActions",
-  "version": "7.2.1",
+  "version": "7.3.0",
   "description": "A module that provides a reusable and placable component detailing a given actor's actions.",
   "authors": [
     "Andrew Kolumbic",
