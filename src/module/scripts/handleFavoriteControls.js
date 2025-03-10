@@ -24,7 +24,7 @@ export function addFavoriteControls(app, html) {
   // add button to toggle favourite of the item in their native tab
   if (app.options.editable) {
     // Handle Click on our action
-    $(html).on('click', 'a.item-action-filter-override', (e) => {
+    $(html).on('click', 'a.item-action-filter-override', async (e) => {
       try {
         const closestItemLi = $(e.target).parents('[data-item-id]')[0]; // BRITTLE
         const itemId = closestItemLi.dataset.itemId;
@@ -35,8 +35,26 @@ export function addFavoriteControls(app, html) {
         const currentFilter = isItemInActionList(relevantItem);
 
         // set the flag to be the opposite of what it is now
-        relevantItem.setFlag(MODULE_ID, MyFlags.filterOverride, !currentFilter);
-        log(false, 'a.item-action-filter-override click registered', {
+        await relevantItem.setFlag(MODULE_ID, MyFlags.filterOverride, !currentFilter);
+
+        // Find the actions tab and re-render it
+        const actionsTab = $(html).find('.tab.actions');
+        if (actionsTab.length) {
+          // Import the renderActionsList function if needed
+          const { renderActionsList } = await import('./api.js');
+
+          // Re-render the actions list
+          const actionsTabHtml = $(await renderActionsList(app.object, { sheetVersion: 'actor-actions-list-v2' }));
+          actionsTab.empty().append(actionsTabHtml);
+
+          // Re-attach event handlers
+          if (app.object.isOwner) {
+            actionsTabHtml.find('.item .item-image').click((event) => app._onItemUse(event));
+            actionsTabHtml.find('.item .item-recharge').click((event) => app._onItemRecharge(event));
+          }
+        }
+
+        log(false, 'a.item-action-filter-override click registered and tab re-rendered', {
           closestItemLi,
           itemId,
           relevantItem,

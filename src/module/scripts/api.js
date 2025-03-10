@@ -169,17 +169,12 @@ export function renderActionsList(actorData, options) {
       isOwner: actorData.isOwner,
     };
 
-    if (options !== undefined) {
-      if (options.sheetVersion == 'actor-actions-list-v2') {
-        return renderTemplate(TEMPLATES.actionListv2, templateData);
-      }
-    } else {
-      return renderTemplate(TEMPLATES.actionList, templateData);
-    }
+    // Always use the v2 template
+    return renderTemplate(TEMPLATES.actionListv2, templateData);
   } catch (error) {
     log(true, 'Error in renderActionsList', error);
-    // Return a minimal template with error information
-    return renderTemplate(TEMPLATES.actionList, {
+    // Return a minimal template with error information using v2 template
+    return renderTemplate(TEMPLATES.actionListv2, {
       error: true,
       errorMessage: error.message,
       isOwner: actorData?.isOwner || false,

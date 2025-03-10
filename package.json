@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "foundryvtt-dnd5eCharacterActions",
-  "version": "7.2.0",
+  "version": "7.3.0",
   "description": "A module that provides a reusable and placable component detailing a given actor's actions.",
   "authors": [
     "Andrew Kolumbic",
@@ -19,12 +19,17 @@
     "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
     "lint:fix": "eslint --ext .ts,.js,.mjs,.cjs --fix .",
     "format": "prettier --write \"./**/*.(ts|js|json|scss)\"",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
     "@rollup/plugin-node-resolve": "^15.1.0",
     "@rollup/stream": "^3.0.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
+    "babel-jest": "^29.7.0",
     "chalk": "^5.3.0",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.3.0",
@@ -34,6 +39,8 @@
     "gulp-dart-sass": "^1.0.2",
     "gulp-sourcemaps": "^3.0.0",
     "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
     "rollup": "^2.53.2",
