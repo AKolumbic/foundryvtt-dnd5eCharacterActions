@@ -95,9 +95,9 @@
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Detail panel (Google Images style) */
+/* Detail panel (Google Images style — spans full grid width under the card) */
 .action-detail-panel {
-  width: 100%;
+  grid-column: 1 / -1;
   background: rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 3px;
@@ -186,6 +186,17 @@
 
 .detail-panel-use {
   font-weight: bold;
+}
+
+.detail-panel-remove {
+  margin-left: auto;
+  border-color: rgba(180, 60, 60, 0.4);
+  color: rgba(255, 150, 150, 0.85);
+}
+
+.detail-panel-remove:hover {
+  background: rgba(180, 60, 60, 0.2) !important;
+  border-color: rgba(180, 60, 60, 0.6) !important;
 }
 
 /* Drag reorder indicators */

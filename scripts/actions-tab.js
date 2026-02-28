@@ -415,6 +415,8 @@ export class ActionsTab {
     element.querySelectorAll(".action-item").forEach((card) => {
       card.addEventListener("contextmenu", (event) => {
         event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
         const actionId = card.dataset.actionId;
         this._showContextMenu(event, [
           {
@@ -468,13 +470,12 @@ export class ActionsTab {
       existingPanel.remove();
     }
 
-    // Open new panel
+    // Open new panel — insert inside the grid right after the card
     const panel = this._createDetailPanel(app.actor, actionId, app);
     if (!panel) return;
 
     card.classList.add("expanded");
-    const actionsList = category.querySelector(".actions-list");
-    actionsList.insertAdjacentElement("afterend", panel);
+    card.insertAdjacentElement("afterend", panel);
   }
 
   /**
@@ -505,6 +506,7 @@ export class ActionsTab {
         <div class="detail-panel-buttons">
           <button class="detail-panel-use"><i class="fas fa-dice-d20"></i> ${game.i18n.localize("ACTIONSTAB.DetailPanel.UseItem")}</button>
           <button class="detail-panel-sheet"><i class="fas fa-edit"></i> ${game.i18n.localize("ACTIONSTAB.DetailPanel.OpenSheet")}</button>
+          <button class="detail-panel-remove"><i class="fas fa-minus-circle"></i> ${game.i18n.localize("ACTIONSTAB.ContextMenu.RemoveFromActions")}</button>
         </div>
       </div>
     `;
@@ -532,6 +534,14 @@ export class ActionsTab {
       item.sheet.render(true);
     });
 
+    // Remove from Actions Tab button
+    panel.querySelector(".detail-panel-remove").addEventListener("click", (e) => {
+      e.stopPropagation();
+      this._removeFromActionsTab(actor, actionId).then(() => {
+        if (app.render) app.render({ force: true });
+      });
+    });
+
     return panel;
   }
 
@@ -541,13 +551,16 @@ export class ActionsTab {
    * @param {ApplicationV2} app - The character sheet application
    */
   static _addReorderListeners(element, app) {
+    const MIME = "application/actions-tab-reorder";
+
     element.querySelectorAll(".actions-category .action-item").forEach((card) => {
       card.setAttribute("draggable", "true");
 
       card.addEventListener("dragstart", (e) => {
+        e.stopPropagation(); // Prevent Foundry's DnD from intercepting
         const actionId = card.dataset.actionId;
         const sourceCategory = card.closest(".actions-category").dataset.category;
-        e.dataTransfer.setData("text/plain", JSON.stringify({ actionId, sourceCategory }));
+        e.dataTransfer.setData(MIME, JSON.stringify({ actionId, sourceCategory }));
         e.dataTransfer.effectAllowed = "move";
         card.classList.add("dragging");
       });
@@ -563,8 +576,14 @@ export class ActionsTab {
         );
       });
 
+      card.addEventListener("dragenter", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
       card.addEventListener("dragover", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         e.dataTransfer.dropEffect = "move";
       });
 
@@ -574,11 +593,15 @@ export class ActionsTab {
 
       card.addEventListener("drop", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         card.classList.remove("drag-over-before", "drag-over-after");
+
+        const raw = e.dataTransfer.getData(MIME);
+        if (!raw) return;
 
         let data;
         try {
-          data = JSON.parse(e.dataTransfer.getData("text/plain"));
+          data = JSON.parse(raw);
         } catch { return; }
 
         const targetCategory = card.closest(".actions-category").dataset.category;
@@ -593,8 +616,14 @@ export class ActionsTab {
 
     // Also allow dropping at end of list (on the .actions-list container itself)
     element.querySelectorAll(".actions-list").forEach((list) => {
+      list.addEventListener("dragenter", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
       list.addEventListener("dragover", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         e.dataTransfer.dropEffect = "move";
       });
 
@@ -602,10 +631,14 @@ export class ActionsTab {
         // Only handle if dropped on the list itself, not on a card
         if (e.target !== list) return;
         e.preventDefault();
+        e.stopPropagation();
+
+        const raw = e.dataTransfer.getData(MIME);
+        if (!raw) return;
 
         let data;
         try {
-          data = JSON.parse(e.dataTransfer.getData("text/plain"));
+          data = JSON.parse(raw);
         } catch { return; }
 
         const targetCategory = list.closest(".actions-category").dataset.category;
