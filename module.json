@@ -1,59 +1,52 @@
 {
-  "id": "character-actions-list-5e",
-  "title": "Actions Tab 5e",
-  "description": "Provides an Actions List Component",
-  "version": "7.3.0",
+  "id": "actions-tab-5e",
+  "title": "Actions Tab for D&D 5e",
+  "description": "Adds an Actions tab to the D&D 5e character sheet for organizing and executing character actions.",
+  "version": "8.0.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
   "authors": [
     {
-      "name": "akolumbic",
-      "url": "https://github.com/akolumbic"
-    },
-    {
-      "name": "Cameron East",
-      "discord": "cronosaurusrex",
-      "url": "https://github.com/eastcw",
-      "ko-fi": "https://ko-fi.com/eastcw"
-    },
-    {
-      "name": "Andrew Krigline",
-      "discord": "Calego#0914",
-      "url": "https://github.com/ElfFriend-DnD"
+      "name": "drosshole",
+      "url": "https://github.com/drosshole"
     }
   ],
-  "esmodules": ["module/foundryvtt-dnd5eCharacterActions.js"],
-  "styles": ["styles/foundryvtt-dnd5eCharacterActions.css"],
+  "esmodules": ["scripts/actions-tab.js"],
+  "styles": ["styles/actions-tab.css", "styles/actions-config.css"],
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "languages/en.json"
     }
   ],
+  "packs": [],
   "relationships": {
     "systems": [
       {
         "id": "dnd5e",
         "type": "system",
         "compatibility": {
-          "minimum": "3.1.0",
-          "verified": "4.0.0"
+          "minimum": "5.0.0",
+          "verified": "5.2.5"
         }
       }
     ]
   },
-  "compatibility": {
-    "minimum": 11,
-    "verified": 12.331
-  },
-  "bugs": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/issues",
-  "changelog": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases",
-  "download": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases/download/v7.3.0/module.zip",
-  "manifest": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/releases/download/v7.3.0/module.json",
-  "readme": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions/blob/main/README.md",
-  "url": "https://github.com/akolumbic/foundryvtt-dnd5eCharacterActions",
-  "manifestPlusVersion": "1.2.0",
   "flags": {
-    "allowBugReporter": true
+    "hotReload": {
+      "extensions": ["css", "hbs", "json"],
+      "css": true
+    }
   },
-  "tags": ["dnd5e", "character", "actions", "combat", "ui"]
+  "socket": false,
+  "url": "https://github.com/drosshole/actions-tab-vtt-module",
+  "manifest": "https://github.com/drosshole/actions-tab-vtt-module/releases/latest/download/module.json",
+  "download": "https://github.com/drosshole/actions-tab-vtt-module/releases/latest/download/actions-tab-5e.zip",
+  "license": "MIT",
+  "readme": "README.md",
+  "bugs": "https://github.com/drosshole/actions-tab-vtt-module/issues",
+  "changelog": "https://github.com/drosshole/actions-tab-vtt-module/releases"
 }

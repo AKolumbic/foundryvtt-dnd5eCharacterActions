@@ -1,0 +1,34 @@
+{
+  "ACTIONSTAB": {
+    "TabName": "Actions",
+    "Configure": "Configure",
+    "EmptyState": "No actions configured. Click the Configure button to add actions.",
+    "Settings": {
+      "AutoPopulate": {
+        "Name": "Auto-populate Actions",
+        "Hint": "Automatically add actions from your character sheet based on their activation type."
+      },
+      "DisplayCategories": {
+        "Name": "Display Categories",
+        "Hint": "Which categories of actions to display in the Actions tab."
+      }
+    },
+    "ActionType": {
+      "Action": "Actions",
+      "Bonus": "Bonus Actions",
+      "Reaction": "Reactions",
+      "Special": "Special"
+    },
+    "Dialog": {
+      "Title": "Configure Actions",
+      "Hint": "Drag items from your inventory to the actions list to add them.",
+      "Save": "Save",
+      "Cancel": "Cancel",
+      "AddCategory": "Add Category",
+      "DeleteCategory": "Delete Category",
+      "CategoryName": "Category Name",
+      "NoActions": "No actions in this category. Drag items here to add them.",
+      "AvailableItems": "Available Items"
+    }
+  }
+}

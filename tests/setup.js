@@ -1,71 +1,211 @@
-// Mock Foundry VTT global objects and functions
+/**
+ * Setup for testing the Actions Tab module
+ * Mocks Foundry v13 / dnd5e v5.x APIs
+ */
+
+// Mock for window (needed for window.ActionsTab assignment in actions-tab.js)
+global.window = global;
+
+// Mock for the game object
 global.game = {
-  actors: {
-    find: jest.fn(),
-  },
   i18n: {
-    localize: jest.fn((key) => key),
+    localize: (key) => key,
+    format: (key, data) => key,
   },
   settings: {
-    get: jest.fn(),
     register: jest.fn(),
+    get: jest.fn().mockImplementation((moduleId, key) => {
+      if (key === "autoPopulate") return true;
+      if (key === "displayCategories")
+        return ["action", "bonus", "reaction", "special"];
+      return null;
+    }),
   },
-  modules: {
-    get: jest.fn(() => ({
-      api: {},
-    })),
+};
+
+// Mock for Hooks
+global.Hooks = {
+  on: jest.fn(),
+  once: jest.fn(),
+};
+
+// Mock for foundry global (v13 APIs)
+global.foundry = {
+  utils: {
+    deepClone: (obj) => JSON.parse(JSON.stringify(obj)),
+    mergeObject: (original, other) => Object.assign({}, original, other),
   },
-  dnd5e: {
-    config: {
-      abilities: {
-        label: {},
+  applications: {
+    api: {
+      ApplicationV2: class ApplicationV2 {
+        constructor(options = {}) {
+          this.options = options;
+        }
+        render(options) {
+          return this;
+        }
+        close() {
+          return this;
+        }
+        get element() {
+          return document.createElement("div");
+        }
       },
-      abilityActivationTypes: {},
-      damageTypes: {},
-      healingTypes: {},
+      HandlebarsApplicationMixin: (Base) =>
+        class extends Base {
+          constructor(options = {}) {
+            super(options);
+          }
+          async _prepareContext(options) {
+            return {};
+          }
+          _onRender(context, options) {}
+        },
     },
   },
 };
 
-global.Hooks = {
-  on: jest.fn(),
-  once: jest.fn(),
-  call: jest.fn(),
-};
+// Mock for document global (for vanilla DOM tests)
+if (typeof document === "undefined") {
+  // Node environment - jsdom is not available, use minimal mock
+  global.document = {
+    createElement: (tag) => ({
+      tagName: tag.toUpperCase(),
+      className: "",
+      dataset: {},
+      innerHTML: "",
+      textContent: "",
+      type: "",
+      children: [],
+      appendChild: jest.fn(),
+      querySelector: jest.fn(),
+      querySelectorAll: jest.fn().mockReturnValue([]),
+      setAttribute: jest.fn(),
+      addEventListener: jest.fn(),
+      closest: jest.fn(),
+      classList: {
+        add: jest.fn(),
+        remove: jest.fn(),
+      },
+    }),
+  };
+}
 
-global.FormApplication = class FormApplication {
-  static get defaultOptions() {
-    return {};
+// Mock Activities Collection (iterable, with size property)
+class ActivitiesCollection {
+  constructor(activities = []) {
+    this._activities = activities;
   }
+
+  get size() {
+    return this._activities.length;
+  }
+
+  [Symbol.iterator]() {
+    return this._activities[Symbol.iterator]();
+  }
+
+  forEach(callback) {
+    this._activities.forEach(callback);
+  }
+}
+
+// Mock for Actor
+class MockActor {
+  constructor(data = {}) {
+    this.items = new Collection();
+    this.type = data.type || "character";
+    this.id = data.id || Math.random().toString(36).substring(2, 15);
+    this._flags = {};
+  }
+
+  getFlag(moduleId, key) {
+    return this._flags[`${moduleId}.${key}`] || null;
+  }
+
+  setFlag(moduleId, key, value) {
+    this._flags[`${moduleId}.${key}`] = value;
+    return Promise.resolve(this);
+  }
+}
+
+// Mock for Item (dnd5e v5.x with activities)
+class MockItem {
+  constructor(data = {}) {
+    this.id = data.id || Math.random().toString(36).substring(2, 15);
+    this.name = data.name || "Test Item";
+    this.type = data.type || "weapon";
+    this.img = data.img || "icons/svg/sword.svg";
+    this.parent = data.parent || null;
+    this.sheet = { render: jest.fn() };
+
+    // dnd5e v5.x: activities-based system
+    const activationType = data.activationType || "action";
+    const activities =
+      data.activities !== undefined
+        ? data.activities
+        : [
+            {
+              activation: {
+                type: activationType,
+              },
+            },
+          ];
+
+    this.system = data.system || {
+      activities: new ActivitiesCollection(activities),
+    };
+  }
+
+  use() {
+    return true;
+  }
+}
+
+// Mock Collection
+class Collection extends Map {
+  constructor(entries) {
+    super(entries);
+  }
+
+  get(key) {
+    return super.get(key);
+  }
+
+  filter(predicate) {
+    return Array.from(this.values()).filter(predicate);
+  }
+
+  forEach(callback) {
+    Array.from(this.values()).forEach(callback);
+  }
+
+  find(predicate) {
+    return Array.from(this.values()).find(predicate);
+  }
+
+  map(callback) {
+    return Array.from(this.values()).map(callback);
+  }
+}
+
+// Utility function to create a test actor with items
+function createTestActor(itemsData = []) {
+  const actor = new MockActor({ type: "character" });
+
+  itemsData.forEach((itemData) => {
+    const item = new MockItem({ ...itemData, parent: actor });
+    actor.items.set(item.id, item);
+  });
+
+  return actor;
+}
+
+// Export mocks and utilities
+export {
+  MockActor,
+  MockItem,
+  ActivitiesCollection,
+  Collection,
+  createTestActor,
 };
-
-global.ActorSheet5e = class ActorSheet5e extends FormApplication {};
-
-global.foundry = {
-  utils: {
-    mergeObject: jest.fn((obj1, obj2) => ({ ...obj1, ...obj2 })),
-  },
-};
-
-global.renderTemplate = jest.fn(() => '<div>Mocked Template</div>');
-
-global.$ = jest.fn(() => ({
-  find: jest.fn(() => ({
-    each: jest.fn(),
-    append: jest.fn(),
-    html: jest.fn(),
-    click: jest.fn(),
-    remove: jest.fn(),
-    empty: jest.fn(),
-    length: 0,
-  })),
-  on: jest.fn(),
-  closest: jest.fn(() => ({
-    parents: jest.fn(() => [{ dataset: { itemId: 'test-id' } }]),
-  })),
-}));
-
-// Clear all mocks between tests
-beforeEach(() => {
-  jest.clearAllMocks();
-});

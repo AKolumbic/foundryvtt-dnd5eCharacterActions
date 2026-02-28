@@ -1,0 +1,213 @@
+/* Actions Tab Configuration Dialog */
+
+.actions-config .window-content {
+  padding: 0;
+}
+
+.actions-config-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Header */
+.actions-config-header {
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.actions-config-header .hint {
+  margin: 0;
+  font-style: italic;
+  color: #666;
+}
+
+/* Body */
+.actions-config-body {
+  display: flex;
+  flex: 1;
+  overflow-y: hidden;
+}
+
+/* Tab Content */
+.actions-config-body .content {
+  flex: 2;
+  padding: 8px;
+  overflow-y: auto;
+  border-right: 1px solid #ccc;
+}
+
+/* Action Categories */
+.actions-category {
+  margin-bottom: 15px;
+}
+
+.actions-category h3 {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Actions List */
+.actions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 5px;
+  min-height: 60px;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.025);
+  border-radius: 3px;
+  border: 1px dashed #ccc;
+}
+
+/* Action Item */
+.action-item {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #7a7971;
+  border-radius: 3px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: grab;
+}
+
+.action-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.action-image,
+.item-image {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border: none;
+}
+
+.action-name,
+.item-name {
+  font-size: 12px;
+  text-align: center;
+  margin: 4px 0;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.action-controls,
+.item-controls {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.action-control,
+.item-control {
+  color: #7a7971;
+  padding: 2px 5px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.action-control:hover,
+.item-control:hover {
+  color: #4b4a44;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.action-delete:hover {
+  color: #ff4444;
+}
+
+.action-empty {
+  text-align: center;
+  padding: 10px;
+  color: #999;
+  font-style: italic;
+}
+
+/* Available Items */
+.available-items {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.available-items h3 {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  cursor: grab;
+}
+
+.item:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: #ccc;
+}
+
+.item-name {
+  flex: 1;
+  text-align: left;
+  padding-left: 8px;
+}
+
+.item-add:hover {
+  color: #4caf50;
+}
+
+/* Footer */
+.actions-config-footer {
+  padding: 8px;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.actions-config-footer button {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #7a7971;
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.actions-config-footer button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.actions-config-footer button.save-button {
+  background: #4b6eaf;
+  color: white;
+  border-color: #3a5a90;
+}
+
+.actions-config-footer button.save-button:hover {
+  background: #3a5a90;
+}
+
+/* Drag and drop styles */
+.actions-list.drag-over {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-color: #4b6eaf;
+}
