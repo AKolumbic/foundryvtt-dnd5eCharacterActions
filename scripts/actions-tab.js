@@ -85,19 +85,23 @@ export class ActionsTab {
     const tabNav = element.querySelector('.tabs[data-group="primary"]');
     if (!tabNav) return;
 
-    // Don't add if already present
-    if (tabNav.querySelector('[data-tab="actions"]')) return;
+    // Add tab button if not already present
+    if (!tabNav.querySelector('[data-tab="actions"]')) {
+      const tabButton = document.createElement("button");
+      tabButton.type = "button";
+      tabButton.dataset.tab = "actions";
+      tabButton.dataset.group = "primary";
+      tabButton.dataset.action = "tab";
+      tabButton.dataset.tooltip = game.i18n.localize("ACTIONSTAB.TabName");
+      tabButton.setAttribute("aria-label", game.i18n.localize("ACTIONSTAB.TabName"));
+      tabButton.innerHTML = '<i class="fas fa-fist-raised"></i>';
+      tabNav.appendChild(tabButton);
+    }
 
-    // Create the new tab button (ApplicationV2 style, icon-based like dnd5e tabs)
-    const tabButton = document.createElement("button");
-    tabButton.type = "button";
-    tabButton.dataset.tab = "actions";
-    tabButton.dataset.group = "primary";
-    tabButton.dataset.action = "tab";
-    tabButton.dataset.tooltip = game.i18n.localize("ACTIONSTAB.TabName");
-    tabButton.setAttribute("aria-label", game.i18n.localize("ACTIONSTAB.TabName"));
-    tabButton.innerHTML = '<i class="fas fa-fist-raised"></i>';
-    tabNav.appendChild(tabButton);
+    // Remove stale tab content (ApplicationV2 partial re-renders destroy sheet-body
+    // contents but keep the tab nav, so we must recreate content each render)
+    const existingContent = element.querySelector('.tab.actions[data-tab="actions"]');
+    if (existingContent) existingContent.remove();
 
     // Create the tab content
     const actionsContent = this._createActionsTabContent(app.actor);
