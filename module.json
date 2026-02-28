@@ -9,8 +9,8 @@
   },
   "authors": [
     {
-      "name": "drosshole",
-      "url": "https://github.com/drosshole"
+      "name": "AKolumbic",
+      "url": "https://github.com/AKolumbic"
     }
   ],
   "esmodules": ["scripts/actions-tab.js"],
@@ -42,11 +42,11 @@
     }
   },
   "socket": false,
-  "url": "https://github.com/drosshole/actions-tab-vtt-module",
-  "manifest": "https://github.com/drosshole/actions-tab-vtt-module/releases/latest/download/module.json",
-  "download": "https://github.com/drosshole/actions-tab-vtt-module/releases/latest/download/actions-tab-5e.zip",
+  "url": "https://github.com/AKolumbic/foundryvtt-dnd5eCharacterActions",
+  "manifest": "https://github.com/AKolumbic/foundryvtt-dnd5eCharacterActions/releases/latest/download/module.json",
+  "download": "https://github.com/AKolumbic/foundryvtt-dnd5eCharacterActions/releases/download/v8.0.0/actions-tab-5e.zip",
   "license": "MIT",
   "readme": "README.md",
-  "bugs": "https://github.com/drosshole/actions-tab-vtt-module/issues",
-  "changelog": "https://github.com/drosshole/actions-tab-vtt-module/releases"
+  "bugs": "https://github.com/AKolumbic/foundryvtt-dnd5eCharacterActions/issues",
+  "changelog": "https://github.com/AKolumbic/foundryvtt-dnd5eCharacterActions/releases"
 }
