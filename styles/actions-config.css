@@ -38,11 +38,11 @@
 }
 
 /* Action Categories */
-.actions-category {
+.actions-config .actions-category {
   margin-bottom: 15px;
 }
 
-.actions-category h3 {
+.actions-config .actions-category h3 {
   font-size: 14px;
   margin: 0 0 8px 0;
   padding-bottom: 4px;
@@ -50,7 +50,7 @@
 }
 
 /* Actions List */
-.actions-list {
+.actions-config .actions-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 5px;
@@ -62,7 +62,7 @@
 }
 
 /* Action Item */
-.action-item {
+.actions-config .action-item {
   background: rgba(0, 0, 0, 0.05);
   border: 1px solid #7a7971;
   border-radius: 3px;
@@ -73,21 +73,21 @@
   cursor: grab;
 }
 
-.action-item.dragging {
+.actions-config .action-item.dragging {
   opacity: 0.5;
   cursor: grabbing;
 }
 
-.action-image,
-.item-image {
+.actions-config .action-image,
+.actions-config .item-image {
   width: 36px;
   height: 36px;
   object-fit: contain;
   border: none;
 }
 
-.action-name,
-.item-name {
+.actions-config .action-name,
+.actions-config .item-name {
   font-size: 12px;
   text-align: center;
   margin: 4px 0;
@@ -98,33 +98,33 @@
   width: 100%;
 }
 
-.action-controls,
-.item-controls {
+.actions-config .action-controls,
+.actions-config .item-controls {
   display: flex;
   justify-content: center;
   width: 100%;
   margin-top: 2px;
 }
 
-.action-control,
-.item-control {
+.actions-config .action-control,
+.actions-config .item-control {
   color: #7a7971;
   padding: 2px 5px;
   border-radius: 3px;
   transition: all 0.2s ease;
 }
 
-.action-control:hover,
-.item-control:hover {
+.actions-config .action-control:hover,
+.actions-config .item-control:hover {
   color: #4b4a44;
   background: rgba(0, 0, 0, 0.1);
 }
 
-.action-delete:hover {
+.actions-config .action-delete:hover {
   color: #ff4444;
 }
 
-.action-empty {
+.actions-config .action-empty {
   text-align: center;
   padding: 10px;
   color: #999;
@@ -132,26 +132,26 @@
 }
 
 /* Available Items */
-.available-items {
+.actions-config .available-items {
   flex: 1;
   padding: 8px;
   overflow-y: auto;
 }
 
-.available-items h3 {
+.actions-config .available-items h3 {
   font-size: 14px;
   margin: 0 0 8px 0;
   padding-bottom: 4px;
   border-bottom: 1px solid #ddd;
 }
 
-.items-list {
+.actions-config .items-list {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.item {
+.actions-config .available-items .item {
   display: flex;
   align-items: center;
   padding: 3px;
@@ -160,18 +160,18 @@
   cursor: grab;
 }
 
-.item:hover {
+.actions-config .available-items .item:hover {
   background: rgba(0, 0, 0, 0.05);
   border-color: #ccc;
 }
 
-.item-name {
+.actions-config .available-items .item-name {
   flex: 1;
   text-align: left;
   padding-left: 8px;
 }
 
-.item-add:hover {
+.actions-config .item-add:hover {
   color: #4caf50;
 }
 
@@ -207,7 +207,7 @@
 }
 
 /* Drag and drop styles */
-.actions-list.drag-over {
+.actions-config .actions-list.drag-over {
   background-color: rgba(0, 0, 0, 0.1);
   border-color: #4b6eaf;
 }

@@ -88,13 +88,15 @@ export class ActionsTab {
     // Don't add if already present
     if (tabNav.querySelector('[data-tab="actions"]')) return;
 
-    // Create the new tab button (ApplicationV2 style)
+    // Create the new tab button (ApplicationV2 style, icon-based like dnd5e tabs)
     const tabButton = document.createElement("button");
     tabButton.type = "button";
     tabButton.dataset.tab = "actions";
     tabButton.dataset.group = "primary";
     tabButton.dataset.action = "tab";
-    tabButton.textContent = game.i18n.localize("ACTIONSTAB.TabName");
+    tabButton.dataset.tooltip = game.i18n.localize("ACTIONSTAB.TabName");
+    tabButton.setAttribute("aria-label", game.i18n.localize("ACTIONSTAB.TabName"));
+    tabButton.innerHTML = '<i class="fas fa-fist-raised"></i>';
     tabNav.appendChild(tabButton);
 
     // Create the tab content
