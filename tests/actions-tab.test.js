@@ -115,6 +115,32 @@ describe("ActionsTab Module", () => {
       expect(actions.some((a) => a.name === "Test Knife")).toBeFalsy();
     });
 
+    test("should update existing actions when activity type changes", () => {
+      const actor = createTestActor([
+        { name: "Test Sword", type: "weapon", activationType: "bonus" },
+      ]);
+
+      const itemId = actor.items.values().next().value.id;
+
+      // Existing action has stale actionType "action", but item now has "bonus"
+      const existingActions = [
+        {
+          id: itemId,
+          name: "Test Sword",
+          actionType: ACTION_TYPES.ACTION,
+          img: "icons/svg/sword.svg",
+          type: "weapon",
+        },
+      ];
+
+      const actions = ActionsTab._autoPopulateActions(actor, existingActions);
+
+      // Should still be 1 action (updated in place, not duplicated)
+      expect(actions).toHaveLength(1);
+      expect(actions[0].id).toBe(itemId);
+      expect(actions[0].actionType).toBe(ACTION_TYPES.BONUS_ACTION);
+    });
+
     test("should handle special activation type", () => {
       const actor = createTestActor([
         { name: "Special Ability", type: "feat", activationType: "special" },

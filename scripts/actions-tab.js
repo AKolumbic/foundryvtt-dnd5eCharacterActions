@@ -205,16 +205,15 @@ export class ActionsTab {
    */
   static _autoPopulateActions(actor, existingActions) {
     const actions = [...existingActions];
-    const existingIds = new Set(existingActions.map((a) => a.id));
+    const existingById = new Map(existingActions.map((a) => [a.id, a]));
 
     actor.items.forEach((item) => {
-      if (existingIds.has(item.id)) return;
-
       // dnd5e v5.x: items have activities instead of activation
       if (!item.system.activities || item.system.activities.size === 0) return;
 
+      // Determine the action type from the first matching activity
+      let actionType;
       for (const activity of item.system.activities) {
-        let actionType;
         const activationType = activity.activation?.type;
 
         switch (activationType) {
@@ -233,19 +232,28 @@ export class ActionsTab {
           default:
             continue;
         }
-
-        // Only store minimal data in flags
-        actions.push({
-          id: item.id,
-          name: item.name,
-          img: item.img,
-          actionType: actionType,
-          type: item.type,
-        });
-
-        // Only add one entry per item (use first matching activity)
         break;
       }
+
+      if (!actionType) return;
+
+      // If the item already exists in the list, update it in place
+      const existing = existingById.get(item.id);
+      if (existing) {
+        existing.actionType = actionType;
+        existing.name = item.name;
+        existing.img = item.img;
+        return;
+      }
+
+      // Otherwise add a new entry with minimal data
+      actions.push({
+        id: item.id,
+        name: item.name,
+        img: item.img,
+        actionType: actionType,
+        type: item.type,
+      });
     });
 
     return actions;
