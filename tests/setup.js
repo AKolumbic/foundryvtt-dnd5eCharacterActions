@@ -154,6 +154,8 @@ class MockItem {
 
     this.system = data.system || {
       activities: new ActivitiesCollection(activities),
+      level: data.level !== undefined ? data.level : undefined,
+      preparation: data.preparation || undefined,
     };
   }
 

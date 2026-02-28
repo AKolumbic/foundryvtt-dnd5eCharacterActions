@@ -120,6 +120,24 @@
   font-style: italic;
 }
 
+/* Unprepared spell indicator */
+.action-item.unprepared {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.action-item.unprepared .action-image {
+  filter: grayscale(50%);
+}
+
+.action-item.unprepared .action-name::after {
+  content: " \2022 unprepared";
+  font-weight: normal;
+  font-style: italic;
+  font-size: 10px;
+  color: #8b0000;
+}
+
 /* Drag and drop styling */
 .action-item.dragging {
   opacity: 0.5;

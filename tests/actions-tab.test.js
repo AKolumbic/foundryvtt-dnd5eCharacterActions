@@ -141,6 +141,95 @@ describe("ActionsTab Module", () => {
       expect(actions[0].actionType).toBe(ACTION_TYPES.BONUS_ACTION);
     });
 
+    test("should skip unprepared spells during auto-populate", () => {
+      const actor = createTestActor([
+        {
+          name: "Prepared Spell",
+          type: "spell",
+          activationType: "action",
+          level: 1,
+          preparation: { mode: "prepared", prepared: true },
+        },
+        {
+          name: "Unprepared Spell",
+          type: "spell",
+          activationType: "action",
+          level: 2,
+          preparation: { mode: "prepared", prepared: false },
+        },
+      ]);
+
+      const actions = ActionsTab._autoPopulateActions(actor, []);
+
+      expect(actions).toHaveLength(1);
+      expect(actions[0].name).toBe("Prepared Spell");
+    });
+
+    test("should always include cantrips regardless of preparation", () => {
+      const actor = createTestActor([
+        {
+          name: "Fire Bolt",
+          type: "spell",
+          activationType: "action",
+          level: 0,
+          preparation: { mode: "prepared", prepared: false },
+        },
+      ]);
+
+      const actions = ActionsTab._autoPopulateActions(actor, []);
+
+      expect(actions).toHaveLength(1);
+      expect(actions[0].name).toBe("Fire Bolt");
+    });
+
+    test("should always include always-prepared and innate spells", () => {
+      const actor = createTestActor([
+        {
+          name: "Always Prepared",
+          type: "spell",
+          activationType: "action",
+          level: 3,
+          preparation: { mode: "always", prepared: false },
+        },
+        {
+          name: "Innate Spell",
+          type: "spell",
+          activationType: "bonus",
+          level: 1,
+          preparation: { mode: "innate" },
+        },
+        {
+          name: "Pact Spell",
+          type: "spell",
+          activationType: "action",
+          level: 2,
+          preparation: { mode: "pact" },
+        },
+        {
+          name: "At Will",
+          type: "spell",
+          activationType: "action",
+          level: 1,
+          preparation: { mode: "atwill" },
+        },
+      ]);
+
+      const actions = ActionsTab._autoPopulateActions(actor, []);
+
+      expect(actions).toHaveLength(4);
+    });
+
+    test("should not filter non-spell items by preparation", () => {
+      const actor = createTestActor([
+        { name: "Sword", type: "weapon", activationType: "action" },
+        { name: "Feature", type: "feat", activationType: "bonus" },
+      ]);
+
+      const actions = ActionsTab._autoPopulateActions(actor, []);
+
+      expect(actions).toHaveLength(2);
+    });
+
     test("should handle special activation type", () => {
       const actor = createTestActor([
         { name: "Special Ability", type: "feat", activationType: "special" },
@@ -202,6 +291,44 @@ describe("ActionsTab Module", () => {
       ActionsTab._onItemDelete(item);
 
       expect(setFlagSpy).toHaveBeenCalledWith(MODULE_ID, "actions", []);
+    });
+  });
+
+  describe("Spell Preparation Check", () => {
+    test("should mark unprepared spells as not prepared", () => {
+      const item = new MockItem({
+        type: "spell",
+        level: 2,
+        preparation: { mode: "prepared", prepared: false },
+      });
+
+      expect(ActionsTab._isSpellPrepared(item)).toBe(false);
+    });
+
+    test("should mark prepared spells as prepared", () => {
+      const item = new MockItem({
+        type: "spell",
+        level: 2,
+        preparation: { mode: "prepared", prepared: true },
+      });
+
+      expect(ActionsTab._isSpellPrepared(item)).toBe(true);
+    });
+
+    test("should always return true for non-spell items", () => {
+      const item = new MockItem({ type: "weapon" });
+
+      expect(ActionsTab._isSpellPrepared(item)).toBe(true);
+    });
+
+    test("should treat cantrips as always prepared", () => {
+      const item = new MockItem({
+        type: "spell",
+        level: 0,
+        preparation: { mode: "prepared", prepared: false },
+      });
+
+      expect(ActionsTab._isSpellPrepared(item)).toBe(true);
     });
   });
 
