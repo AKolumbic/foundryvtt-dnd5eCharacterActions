@@ -130,16 +130,12 @@ export class ActionsTab {
     content.dataset.group = "primary";
     content.dataset.tab = "actions";
 
-    // Header with configure button
-    const header = document.createElement("div");
-    header.className = "actions-header";
-    header.innerHTML = `
-      <h3>${game.i18n.localize("ACTIONSTAB.TabName")}</h3>
-      <button class="configure-actions" type="button">
-        <i class="fas fa-cog"></i> ${game.i18n.localize("ACTIONSTAB.Configure")}
-      </button>
-    `;
-    content.appendChild(header);
+    // Configure gear icon (top-right corner)
+    const configBtn = document.createElement("a");
+    configBtn.className = "configure-actions";
+    configBtn.title = game.i18n.localize("ACTIONSTAB.Configure");
+    configBtn.innerHTML = '<i class="fas fa-cog"></i>';
+    content.appendChild(configBtn);
 
     // Filter by display categories
     const displayCategories = game.settings.get(MODULE_ID, "displayCategories");
@@ -171,10 +167,7 @@ export class ActionsTab {
           <div class="action-item${unpreparedClass}" data-action-id="${action.id}">
             <img class="action-image" src="${action.img}" title="${action.name}${unpreparedTitle}">
             <div class="action-name">${action.name}</div>
-            <div class="action-controls">
-              <a class="action-control action-roll"><i class="fas fa-dice-d20"></i></a>
-              <a class="action-control action-info"><i class="fas fa-info-circle"></i></a>
-            </div>
+            <a class="action-info" title="${game.i18n.localize("ACTIONSTAB.ItemDetails")}"><i class="fas fa-info-circle"></i></a>
           </div>
         `;
       }
@@ -328,12 +321,12 @@ export class ActionsTab {
       );
     }
 
-    // Action roll buttons
-    element.querySelectorAll(".action-roll").forEach((btn) => {
-      btn.addEventListener("click", this._onActionRoll.bind(this, app));
+    // Whole card click → use item
+    element.querySelectorAll(".action-item").forEach((card) => {
+      card.addEventListener("click", this._onActionRoll.bind(this, app));
     });
 
-    // Action info buttons
+    // Info icon click → open item sheet (stop propagation to prevent card click)
     element.querySelectorAll(".action-info").forEach((btn) => {
       btn.addEventListener("click", this._onActionInfo.bind(this, app));
     });
@@ -357,8 +350,7 @@ export class ActionsTab {
   static _onActionRoll(app, event) {
     event.preventDefault();
 
-    const actionItem = event.currentTarget.closest(".action-item");
-    const actionId = actionItem.dataset.actionId;
+    const actionId = event.currentTarget.dataset.actionId;
 
     const item = app.actor.items.get(actionId);
     if (!item) return;
@@ -373,6 +365,7 @@ export class ActionsTab {
    */
   static _onActionInfo(app, event) {
     event.preventDefault();
+    event.stopPropagation();
 
     const actionItem = event.currentTarget.closest(".action-item");
     const actionId = actionItem.dataset.actionId;

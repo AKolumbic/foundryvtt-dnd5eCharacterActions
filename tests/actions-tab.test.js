@@ -359,13 +359,11 @@ describe("ActionsTab Module", () => {
       const app = { actor };
 
       // Create a mock DOM structure for the event
-      const actionItemEl = {
-        dataset: { actionId: itemId },
-      };
+      // Card click: currentTarget IS the .action-item element
       const event = {
         preventDefault: jest.fn(),
         currentTarget: {
-          closest: jest.fn().mockReturnValue(actionItemEl),
+          dataset: { actionId: itemId },
         },
       };
 

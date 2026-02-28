@@ -2,7 +2,8 @@
   "ACTIONSTAB": {
     "TabName": "Actions",
     "Configure": "Configure",
-    "EmptyState": "No actions configured. Click the Configure button to add actions.",
+    "EmptyState": "No actions configured. Click the gear icon to add actions.",
+    "ItemDetails": "Item Details",
     "Unprepared": "Unprepared",
     "Settings": {
       "AutoPopulate": {
