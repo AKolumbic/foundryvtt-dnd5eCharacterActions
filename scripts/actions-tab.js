@@ -100,16 +100,17 @@ export class ActionsTab {
 
     // Remove stale tab content (ApplicationV2 partial re-renders destroy sheet-body
     // contents but keep the tab nav, so we must recreate content each render)
-    const existingContent = element.querySelector('.tab.actions[data-tab="actions"]');
+    const existingContent = element.querySelector('[data-tab="actions"][data-group="primary"].tab');
     if (existingContent) existingContent.remove();
 
     // Create the tab content
     const actionsContent = this._createActionsTabContent(app.actor);
 
-    // Find the sheet body and append
-    const sheetBody = element.querySelector(".sheet-body");
-    if (sheetBody) {
-      sheetBody.appendChild(actionsContent);
+    // Append to .tab-body inside .main-content (alongside native dnd5e tabs)
+    // This ensures the actions tab respects the collapsible sidebar layout
+    const tabBody = element.querySelector('.tab-body[data-container-id="tabs"]');
+    if (tabBody) {
+      tabBody.appendChild(actionsContent);
     }
 
     // Add event listeners
@@ -124,7 +125,7 @@ export class ActionsTab {
   static _createActionsTabContent(actor) {
     const actions = this._getActionsForActor(actor);
 
-    const content = document.createElement("div");
+    const content = document.createElement("section");
     content.className = "tab actions";
     content.dataset.group = "primary";
     content.dataset.tab = "actions";
