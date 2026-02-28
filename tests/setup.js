@@ -65,32 +65,6 @@ global.foundry = {
   },
 };
 
-// Mock for document global (for vanilla DOM tests)
-if (typeof document === "undefined") {
-  // Node environment - jsdom is not available, use minimal mock
-  global.document = {
-    createElement: (tag) => ({
-      tagName: tag.toUpperCase(),
-      className: "",
-      dataset: {},
-      innerHTML: "",
-      textContent: "",
-      type: "",
-      children: [],
-      appendChild: jest.fn(),
-      querySelector: jest.fn(),
-      querySelectorAll: jest.fn().mockReturnValue([]),
-      setAttribute: jest.fn(),
-      addEventListener: jest.fn(),
-      closest: jest.fn(),
-      classList: {
-        add: jest.fn(),
-        remove: jest.fn(),
-      },
-    }),
-  };
-}
-
 // Mock Activities Collection (iterable, with size property)
 class ActivitiesCollection {
   constructor(activities = []) {
@@ -156,6 +130,7 @@ class MockItem {
       activities: new ActivitiesCollection(activities),
       level: data.level !== undefined ? data.level : undefined,
       preparation: data.preparation || undefined,
+      description: { value: data.description || "" },
     };
   }
 

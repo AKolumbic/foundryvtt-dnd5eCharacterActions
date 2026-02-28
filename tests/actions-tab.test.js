@@ -332,6 +332,169 @@ describe("ActionsTab Module", () => {
     });
   });
 
+  describe("Exclusion List", () => {
+    test("should skip excluded items in auto-populate", () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Sword", type: "weapon", activationType: "action" },
+        { id: "item2", name: "Shield Bash", type: "feat", activationType: "bonus" },
+      ]);
+      actor._flags[`${MODULE_ID}.excludedActions`] = ["item2"];
+
+      const actions = ActionsTab._autoPopulateActions(actor, []);
+      expect(actions).toHaveLength(1);
+      expect(actions[0].name).toBe("Sword");
+    });
+
+    test("should add to actions tab and remove from exclusion list", async () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Sword", type: "weapon", activationType: "action" },
+      ]);
+      actor._flags[`${MODULE_ID}.excludedActions`] = ["item1"];
+      const item = actor.items.get("item1");
+
+      await ActionsTab._addToActionsTab(actor, item);
+
+      const actions = actor.getFlag(MODULE_ID, "actions");
+      expect(actions).toHaveLength(1);
+      expect(actions[0].id).toBe("item1");
+
+      const excluded = actor.getFlag(MODULE_ID, "excludedActions");
+      expect(excluded).not.toContain("item1");
+    });
+
+    test("should remove from actions tab and add to exclusion list", async () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Sword", type: "weapon", activationType: "action" },
+      ]);
+      actor._flags[`${MODULE_ID}.actions`] = [
+        { id: "item1", name: "Sword", actionType: "action", img: "icons/svg/sword.svg", type: "weapon" },
+      ];
+
+      await ActionsTab._removeFromActionsTab(actor, "item1");
+
+      const actions = actor.getFlag(MODULE_ID, "actions");
+      expect(actions).toHaveLength(0);
+
+      const excluded = actor.getFlag(MODULE_ID, "excludedActions");
+      expect(excluded).toContain("item1");
+    });
+
+    test("should clean exclusion list when item is deleted", () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Sword", type: "weapon", activationType: "action" },
+      ]);
+      actor._flags[`${MODULE_ID}.actions`] = [
+        { id: "item1", name: "Sword", actionType: "action" },
+      ];
+      actor._flags[`${MODULE_ID}.excludedActions`] = ["item1", "item2"];
+
+      const item = actor.items.get("item1");
+      const setFlagSpy = jest.spyOn(actor, "setFlag");
+
+      ActionsTab._onItemDelete(item);
+
+      // Should have cleaned both the actions and exclusion list
+      expect(setFlagSpy).toHaveBeenCalledWith(MODULE_ID, "actions", []);
+      expect(setFlagSpy).toHaveBeenCalledWith(MODULE_ID, "excludedActions", ["item2"]);
+    });
+
+    test("should not duplicate items in actions list via _addToActionsTab", async () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Sword", type: "weapon", activationType: "action" },
+      ]);
+      actor._flags[`${MODULE_ID}.actions`] = [
+        { id: "item1", name: "Sword", actionType: "action", img: "icons/svg/sword.svg", type: "weapon" },
+      ];
+      const item = actor.items.get("item1");
+
+      await ActionsTab._addToActionsTab(actor, item);
+
+      const actions = actor.getFlag(MODULE_ID, "actions");
+      expect(actions).toHaveLength(1);
+    });
+  });
+
+  describe("Reorder Actions", () => {
+    test("should reorder within same category", async () => {
+      const actor = createTestActor();
+      actor._flags[`${MODULE_ID}.actions`] = [
+        { id: "a", name: "A", actionType: "action" },
+        { id: "b", name: "B", actionType: "action" },
+        { id: "c", name: "C", actionType: "action" },
+      ];
+
+      // Move C before A
+      await ActionsTab._reorderAction(actor, "c", "action", "a");
+
+      const actions = actor.getFlag(MODULE_ID, "actions");
+      expect(actions.map((a) => a.id)).toEqual(["c", "a", "b"]);
+    });
+
+    test("should reorder to end of category when insertBeforeId is null", async () => {
+      const actor = createTestActor();
+      actor._flags[`${MODULE_ID}.actions`] = [
+        { id: "a", name: "A", actionType: "action" },
+        { id: "b", name: "B", actionType: "action" },
+        { id: "c", name: "C", actionType: "action" },
+      ];
+
+      // Move A to end
+      await ActionsTab._reorderAction(actor, "a", "action", null);
+
+      const actions = actor.getFlag(MODULE_ID, "actions");
+      expect(actions.map((a) => a.id)).toEqual(["b", "c", "a"]);
+    });
+
+    test("should preserve cross-category order", async () => {
+      const actor = createTestActor();
+      actor._flags[`${MODULE_ID}.actions`] = [
+        { id: "a1", name: "A1", actionType: "action" },
+        { id: "b1", name: "B1", actionType: "bonus" },
+        { id: "a2", name: "A2", actionType: "action" },
+        { id: "b2", name: "B2", actionType: "bonus" },
+      ];
+
+      // Reorder A2 before A1: splice out a2, then insert before a1
+      // After splice: [a1, b1, b2] → insert a2 at index 0 → [a2, a1, b1, b2]
+      await ActionsTab._reorderAction(actor, "a2", "action", "a1");
+
+      const actions = actor.getFlag(MODULE_ID, "actions");
+      expect(actions.map((a) => a.id)).toEqual(["a2", "a1", "b1", "b2"]);
+    });
+
+    test("should no-op when action ID not found", async () => {
+      const actor = createTestActor();
+      const original = [
+        { id: "a", name: "A", actionType: "action" },
+      ];
+      actor._flags[`${MODULE_ID}.actions`] = [...original];
+
+      await ActionsTab._reorderAction(actor, "nonexistent", "action", "a");
+
+      // Flag should not have been updated (setFlag not called)
+      expect(actor.getFlag(MODULE_ID, "actions")).toEqual(original);
+    });
+  });
+
+  describe("Action Type Detection", () => {
+    test("should detect action type from item activities", () => {
+      const item = new MockItem({ activationType: "bonus" });
+      expect(ActionsTab._getActionTypeFromItem(item)).toBe(ACTION_TYPES.BONUS_ACTION);
+    });
+
+    test("should return null for items without activities", () => {
+      const item = new MockItem({ activities: [] });
+      expect(ActionsTab._getActionTypeFromItem(item)).toBeNull();
+    });
+
+    test("should return null for unknown activation types", () => {
+      const item = new MockItem({
+        activities: [{ activation: { type: "legendary" } }],
+      });
+      expect(ActionsTab._getActionTypeFromItem(item)).toBeNull();
+    });
+  });
+
   describe("UI Integration", () => {
     test("should only add tab to character sheets", () => {
       const npcActor = createTestActor();
@@ -341,38 +504,62 @@ describe("ActionsTab Module", () => {
         actor: npcActor,
       };
 
-      // Should not throw and should return early
       const element = document.createElement("div");
       ActionsTab._onRenderCharacterSheet(npcApp, element, {}, {});
 
-      // Verify no DOM manipulation happened (querySelector never called for tabs)
-      expect(element.querySelector).not.toHaveBeenCalled();
+      // Should return early for non-character actors — no actions tab added
+      expect(element.querySelector('[data-tab="actions"]')).toBeNull();
     });
 
-    test("should use item.use() instead of item.roll()", () => {
-      const item = new MockItem();
-      const itemId = item.id;
+    test("should create detail panel with correct item data", () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Warhammer", type: "weapon", activationType: "action", description: "<p>A heavy weapon</p>" },
+      ]);
+      const app = { actor, render: jest.fn() };
 
+      const panel = ActionsTab._createDetailPanel(actor, "item1", app);
+
+      expect(panel).not.toBeNull();
+      expect(panel.dataset.actionId).toBe("item1");
+      expect(panel.querySelector(".detail-panel-name").textContent).toBe("Warhammer");
+      expect(panel.querySelector(".detail-panel-description").innerHTML).toContain("A heavy weapon");
+    });
+
+    test("should return null for missing item in detail panel", () => {
       const actor = createTestActor();
-      actor.items.set(itemId, item);
-
       const app = { actor };
 
-      // Create a mock DOM structure for the event
-      // Card click: currentTarget IS the .action-item element
-      const event = {
-        preventDefault: jest.fn(),
-        currentTarget: {
-          dataset: { actionId: itemId },
-        },
-      };
+      const panel = ActionsTab._createDetailPanel(actor, "nonexistent", app);
+      expect(panel).toBeNull();
+    });
 
+    test("detail panel use button should call item.use()", () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Warhammer", type: "weapon", activationType: "action" },
+      ]);
+      const item = actor.items.get("item1");
       const useSpy = jest.spyOn(item, "use");
+      const app = { actor, render: jest.fn() };
 
-      ActionsTab._onActionRoll(app, event);
+      const panel = ActionsTab._createDetailPanel(actor, "item1", app);
+      const useBtn = panel.querySelector(".detail-panel-use");
+      useBtn.click();
 
-      expect(event.preventDefault).toHaveBeenCalled();
       expect(useSpy).toHaveBeenCalled();
+    });
+
+    test("detail panel sheet button should call item.sheet.render()", () => {
+      const actor = createTestActor([
+        { id: "item1", name: "Warhammer", type: "weapon", activationType: "action" },
+      ]);
+      const item = actor.items.get("item1");
+      const app = { actor, render: jest.fn() };
+
+      const panel = ActionsTab._createDetailPanel(actor, "item1", app);
+      const sheetBtn = panel.querySelector(".detail-panel-sheet");
+      sheetBtn.click();
+
+      expect(item.sheet.render).toHaveBeenCalledWith(true);
     });
 
     test("should open config dialog with ApplicationV2 API", () => {
@@ -387,6 +574,14 @@ describe("ActionsTab Module", () => {
       }).not.toThrow();
 
       expect(event.preventDefault).toHaveBeenCalled();
+    });
+
+    test("should register dnd5e context menu hook", () => {
+      ActionsTab.init();
+      expect(Hooks.on).toHaveBeenCalledWith(
+        "dnd5e.getItemContextOptions",
+        expect.any(Function)
+      );
     });
   });
 });

@@ -95,6 +95,14 @@ export class ActionsConfig extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   static async formHandler(event, form, formData) {
     await this.actor.setFlag(MODULE_ID, "actions", this.actionsList);
+
+    // Clean exclusion list: remove IDs that are now in the actions list
+    const excluded = this.actor.getFlag(MODULE_ID, "excludedActions") || [];
+    if (excluded.length) {
+      const actionIds = new Set(this.actionsList.map((a) => a.id));
+      const cleaned = excluded.filter((id) => !actionIds.has(id));
+      await this.actor.setFlag(MODULE_ID, "excludedActions", cleaned);
+    }
   }
 
   /**

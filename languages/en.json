@@ -15,6 +15,15 @@
         "Hint": "Which categories of actions to display in the Actions tab."
       }
     },
+    "DetailPanel": {
+      "Close": "Close",
+      "UseItem": "Use Item",
+      "OpenSheet": "Open Sheet"
+    },
+    "ContextMenu": {
+      "AddToActions": "Add to Actions Tab",
+      "RemoveFromActions": "Remove from Actions Tab"
+    },
     "ActionType": {
       "Action": "Actions",
       "Bonus": "Bonus Actions",

@@ -88,25 +88,142 @@
   width: 100%;
 }
 
-/* Info icon (corner of card) */
-.action-info {
+/* Expanded card highlight */
+.action-item.expanded {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Detail panel (Google Images style) */
+.action-detail-panel {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  overflow: hidden;
+}
+
+.detail-panel-content {
+  position: relative;
+  padding: 12px;
+}
+
+.detail-panel-close {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
-  padding: 2px 4px;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 6px;
   border-radius: 3px;
   transition: all 0.15s ease;
-  opacity: 0;
 }
 
-.action-item:hover .action-info {
-  opacity: 1;
+.detail-panel-close:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.action-info:hover {
+.detail-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.detail-panel-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border: none;
+}
+
+.detail-panel-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.detail-panel-description {
+  font-size: 13px;
+  line-height: 1.4;
   color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.detail-panel-description:empty {
+  display: none;
+}
+
+.detail-panel-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.detail-panel-buttons button {
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.detail-panel-buttons button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.detail-panel-use {
+  font-weight: bold;
+}
+
+/* Drag reorder indicators */
+.action-item.drag-over-before {
+  border-left: 3px solid rgba(255, 200, 50, 0.8);
+}
+
+.action-item.drag-over-after {
+  border-right: 3px solid rgba(255, 200, 50, 0.8);
+}
+
+/* Context menu */
+.actions-tab-context-menu {
+  position: fixed;
+  z-index: 10000;
+  background: #1a1a2e;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  min-width: 180px;
+  padding: 4px 0;
+}
+
+.actions-tab-context-menu ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.actions-tab-context-menu li {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  transition: background 0.1s ease;
+}
+
+.actions-tab-context-menu li:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
