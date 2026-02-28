@@ -101,6 +101,10 @@ export class ActionsTab {
       tabNav.appendChild(tabButton);
     }
 
+    // Check if the actions tab is currently active before removing stale content
+    const tabButton = tabNav.querySelector('[data-tab="actions"]');
+    const isActive = tabButton?.classList.contains("active");
+
     // Remove stale tab content (ApplicationV2 partial re-renders destroy sheet-body
     // contents but keep the tab nav, so we must recreate content each render)
     const existingContent = element.querySelector('[data-tab="actions"][data-group="primary"].tab');
@@ -108,6 +112,11 @@ export class ActionsTab {
 
     // Create the tab content
     const actionsContent = this._createActionsTabContent(app.actor);
+
+    // Preserve active tab state across re-renders
+    if (isActive) {
+      actionsContent.classList.add("active");
+    }
 
     // Append to .tab-body inside .main-content (alongside native dnd5e tabs)
     // This ensures the actions tab respects the collapsible sidebar layout
@@ -421,7 +430,7 @@ export class ActionsTab {
         this._showContextMenu(event, [
           {
             label: game.i18n.localize("ACTIONSTAB.ContextMenu.RemoveFromActions"),
-            callback: () => this._removeFromActionsTab(app.actor, actionId).then(() => app.render({ force: true })),
+            callback: () => this._removeFromActionsTab(app.actor, actionId),
           },
         ]);
       });
@@ -537,9 +546,7 @@ export class ActionsTab {
     // Remove from Actions Tab button
     panel.querySelector(".detail-panel-remove").addEventListener("click", (e) => {
       e.stopPropagation();
-      this._removeFromActionsTab(actor, actionId).then(() => {
-        if (app.render) app.render({ force: true });
-      });
+      this._removeFromActionsTab(actor, actionId);
     });
 
     return panel;
@@ -609,8 +616,7 @@ export class ActionsTab {
         if (data.sourceCategory !== targetCategory) return;
         if (data.actionId === card.dataset.actionId) return;
 
-        this._reorderAction(app.actor, data.actionId, targetCategory, card.dataset.actionId)
-          .then(() => app.render({ force: true }));
+        this._reorderAction(app.actor, data.actionId, targetCategory, card.dataset.actionId);
       });
     });
 
@@ -645,8 +651,7 @@ export class ActionsTab {
         if (data.sourceCategory !== targetCategory) return;
 
         // Drop at end (no insertBeforeId)
-        this._reorderAction(app.actor, data.actionId, targetCategory, null)
-          .then(() => app.render({ force: true }));
+        this._reorderAction(app.actor, data.actionId, targetCategory, null);
       });
     });
   }
