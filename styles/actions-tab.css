@@ -1,0 +1,132 @@
+/* Actions Tab for D&D 5e */
+
+/* Tab content */
+.tab.actions {
+  padding: 8px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* Actions header */
+.actions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #00000033;
+  padding-bottom: 8px;
+}
+
+.actions-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.actions-header button.configure-actions {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #7a7971;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 16px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.actions-header button.configure-actions:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Actions category */
+.actions-category {
+  margin-bottom: 15px;
+}
+
+.actions-category h4 {
+  font-size: 14px;
+  margin: 0 0 5px 0;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 3px;
+}
+
+/* Actions list */
+.actions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 5px;
+}
+
+/* Action item */
+.action-item {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #7a7971;
+  border-radius: 3px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-item:hover {
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.action-image {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border: none;
+}
+
+.action-name {
+  font-size: 12px;
+  text-align: center;
+  margin: 4px 0;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.action-controls {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.action-control {
+  color: #7a7971;
+  padding: 2px 5px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.action-control:hover {
+  color: #4b4a44;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Empty state */
+.actions-empty {
+  text-align: center;
+  padding: 20px;
+  color: #4b4a44;
+  font-style: italic;
+}
+
+/* Drag and drop styling */
+.action-item.dragging {
+  opacity: 0.5;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.actions-list.drag-over {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}

@@ -1,0 +1,78 @@
+<div class="actions-config-container">
+  <div class="actions-config-header">
+    <p class="hint">{{localize "ACTIONSTAB.Dialog.Hint"}}</p>
+  </div>
+
+  <div class="actions-config-body">
+    <!-- Tab Content -->
+    <div class="content">
+      <!-- Configuration Tab -->
+      <div class="tab" data-tab="actions">
+        <!-- Action Categories -->
+        {{#each actionsByType as |actions category|}}
+          <div class="actions-category" data-category="{{category}}">
+            <h3>{{localize
+                (concat "ACTIONSTAB.ActionType." (capitalize category))
+              }}</h3>
+            <div class="actions-list" data-category="{{category}}">
+              {{#if actions.length}}
+                {{#each actions as |action|}}
+                  <div class="action-item" data-action-id="{{action.id}}">
+                    <img
+                      class="action-image"
+                      src="{{action.img}}"
+                      title="{{action.name}}"
+                    />
+                    <div class="action-name">{{action.name}}</div>
+                    <div class="action-controls">
+                      <a class="action-control" data-action="removeAction"><i
+                          class="fas fa-trash"
+                        ></i></a>
+                    </div>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="actions-empty">
+                  <p>{{localize "ACTIONSTAB.Dialog.NoActions"}}</p>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <!-- Available Items -->
+    <div class="available-items">
+      <h3>{{localize "ACTIONSTAB.Dialog.AvailableItems"}}</h3>
+      <div class="items-list">
+        {{#each availableItems as |item|}}
+          <div class="item" data-item-id="{{item.id}}">
+            <img
+              class="item-image"
+              src="{{item.img}}"
+              title="{{item.name}}"
+            />
+            <div class="item-name">{{item.name}}</div>
+            <div class="item-controls">
+              <a class="item-control" data-action="addItem" title="Add to Actions"><i
+                  class="fas fa-plus"
+                ></i></a>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div class="actions-config-footer">
+    <button type="submit" class="save-button">
+      <i class="fas fa-save"></i>
+      {{localize "ACTIONSTAB.Dialog.Save"}}
+    </button>
+    <button type="button" data-action="cancel">
+      <i class="fas fa-times"></i>
+      {{localize "ACTIONSTAB.Dialog.Cancel"}}
+    </button>
+  </div>
+</div>
