@@ -3,6 +3,7 @@
     "TabName": "Actions",
     "Configure": "Configure",
     "EmptyState": "No actions configured. Click the Configure button to add actions.",
+    "Unprepared": "Unprepared",
     "Settings": {
       "AutoPopulate": {
         "Name": "Auto-populate Actions",

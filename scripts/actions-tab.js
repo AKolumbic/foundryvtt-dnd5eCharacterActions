@@ -152,9 +152,17 @@ export class ActionsTab {
 
       let actionsHtml = "";
       for (const action of categoryActions) {
+        // Check if spell is unprepared (for manually added spells)
+        const item = actor.items.get(action.id);
+        const isPrepared = item ? this._isSpellPrepared(item) : true;
+        const unpreparedClass = isPrepared ? "" : " unprepared";
+        const unpreparedTitle = isPrepared
+          ? ""
+          : ` (${game.i18n.localize("ACTIONSTAB.Unprepared")})`;
+
         actionsHtml += `
-          <div class="action-item" data-action-id="${action.id}">
-            <img class="action-image" src="${action.img}" title="${action.name}">
+          <div class="action-item${unpreparedClass}" data-action-id="${action.id}">
+            <img class="action-image" src="${action.img}" title="${action.name}${unpreparedTitle}">
             <div class="action-name">${action.name}</div>
             <div class="action-controls">
               <a class="action-control action-roll"><i class="fas fa-dice-d20"></i></a>
@@ -211,6 +219,9 @@ export class ActionsTab {
       // dnd5e v5.x: items have activities instead of activation
       if (!item.system.activities || item.system.activities.size === 0) return;
 
+      // Skip unprepared spells (cantrips and always/innate/pact/atwill are always included)
+      if (item.type === "spell" && !this._isSpellAvailable(item)) return;
+
       // Determine the action type from the first matching activity
       let actionType;
       for (const activity of item.system.activities) {
@@ -257,6 +268,42 @@ export class ActionsTab {
     });
 
     return actions;
+  }
+
+  /**
+   * Check if a spell is available for auto-population.
+   * Cantrips, always-prepared, innate, pact, and at-will spells are always available.
+   * Prepared-mode spells must be actively prepared.
+   * @param {Item5e} item - The spell item
+   * @returns {boolean} Whether the spell should be included
+   */
+  static _isSpellAvailable(item) {
+    const prep = item.system.preparation;
+    if (!prep) return true;
+
+    // Cantrips are always available
+    if (item.system.level === 0) return true;
+
+    // These preparation modes don't require active preparation
+    const alwaysAvailable = ["always", "innate", "pact", "atwill"];
+    if (alwaysAvailable.includes(prep.mode)) return true;
+
+    // For "prepared" mode, check if actually prepared
+    if (prep.mode === "prepared") return !!prep.prepared;
+
+    return true;
+  }
+
+  /**
+   * Check if a spell item is currently prepared (for UI display purposes).
+   * Returns true for non-spells, cantrips, always/innate/pact/atwill, and prepared spells.
+   * Returns false only for prepared-mode spells that are not currently prepared.
+   * @param {Item5e} item - The item to check
+   * @returns {boolean} Whether the spell is prepared
+   */
+  static _isSpellPrepared(item) {
+    if (item.type !== "spell") return true;
+    return this._isSpellAvailable(item);
   }
 
   /**
